@@ -57,7 +57,8 @@ small_fontsize=14
 
 plt.rc("text", usetex=True)
 plt.rc("font", family="serif")
-plt.rcParams.update({'text.latex.preamble' : [r'\usepackage{amsmath}']})
+plt.rcParams['text.usetex'] = True
+# plt.rcParams.update({'text.latex.preamble' : [r'\usepackage{amsmath}']})
 
 def label_plot(ax, label, loc="center center", fontsize=large_fontsize):
     if isinstance(loc, tuple):

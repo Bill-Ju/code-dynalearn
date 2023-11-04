@@ -1,0 +1,189 @@
+---Experiment example-sis-ba---
+Current time: 2023-11-04 15:28:23
+
+---Config---
+name: example-sis-ba
+path_to_data: ./examples/data/example-sis-ba
+path_to_best: ./examples/best/example-sis-ba.pt
+path_to_summary: ./examples/summaries
+dynamics:
+	name: SIS
+	infection: 0.04
+	recovery: 0.08
+	init_param: None
+	is_weighted: False
+	is_multiplex: False
+	lag: 1
+	lagstep: 1
+
+networks:
+	name: BANetworkGenerator
+	num_nodes: 1000
+	m: 2
+
+model:
+	name: GNNSEDynamics
+	gnn_name: DynamicsGATConv
+	type: linear
+	num_states: 2
+	optimizer:
+		name: RAdam
+		lr: 0.001
+		weight_decay: 0.0001
+		betas: (0.9, 0.999)
+		eps: 1e-08
+		amsgrad: False
+
+	in_activation: relu
+	gnn_activation: relu
+	out_activation: relu
+	in_channels: [32, 32]
+	gnn_channels: 32
+	out_channels: [32, 32]
+	heads: 2
+	concat: True
+	bias: True
+	self_attention: True
+	is_weighted: False
+	is_multiplex: False
+	lag: 1
+	lagstep: 1
+	network_layers: None
+	in_size: 1
+	out_size: 2
+	out_act: softmax
+	node_channels: [0]
+	num_params: 8810
+
+dataset:
+	name: DiscreteStateWeightDataset
+	modes: ['main']
+	bias: 0
+	replace: True
+	use_groundtruth: True
+	use_strength: True
+	compounded: True
+
+train_details:
+	val_fraction: 0.01
+	val_bias: 0.8
+	epochs: 10
+	batch_size: 1
+	num_networks: 1
+	num_samples: 1000
+	resampling: 2
+	maxlag: 1
+	resample_when_dead: True
+
+metrics:
+	names: ('TrueLTPMetrics', 'GNNLTPMetrics', 'MLELTPMetrics')
+	ltp:
+		max_num_sample: 1000
+		max_num_points: -1
+
+	prediciton:
+		max_num_points: 10000.0
+
+	statistics:
+		max_num_points: 10000
+		maxlag: 1
+
+	stationary:
+		adaptive: True
+		num_nodes: 1000
+		init_param: {'absorbing': array([0.999, 0.001])}
+		sampler: SteadyStateSampler
+		burn: 1
+		T: 1000
+		tol: 500
+		num_samples: 5
+		statistics: MeanVarStatistics
+		init_epsilon: 0.001
+		parameters: {'absorbing': array([0.1       , 0.24081633, 0.38163265, 0.52244898, 0.66326531,
+       0.80408163, 0.94489796, 1.08571429, 1.22653061, 1.36734694,
+       1.50816327, 1.64897959, 1.78979592, 1.93061224, 2.07142857,
+       2.2122449 , 2.35306122, 2.49387755, 2.63469388, 2.7755102 ,
+       2.91632653, 3.05714286, 3.19795918, 3.33877551, 3.47959184,
+       3.62040816, 3.76122449, 3.90204082, 4.04285714, 4.18367347,
+       4.3244898 , 4.46530612, 4.60612245, 4.74693878, 4.8877551 ,
+       5.02857143, 5.16938776, 5.31020408, 5.45102041, 5.59183673,
+       5.73265306, 5.87346939, 6.01428571, 6.15510204, 6.29591837,
+       6.43673469, 6.57755102, 6.71836735, 6.85918367, 7.        ])}
+
+	attention:
+		max_num_points: 100
+
+
+train_metrics: ['jensenshannon', 'model_entropy']
+callbacks:
+	names: ['ModelCheckpoint', 'StepLR']
+	step_size: 20
+	gamma: 0.5
+	path_to_best: ./examples/best/example-sis-ba.pt
+
+seed: 0
+
+
+---Generating data---
+Generating training set
+Computing weights
+
+---Partitioning val-data---
+Fraction of partitionned samples: 0.0099
+
+---Training model---
+Epoch 0
+Evaluating train
+Evaluating val
+val_loss improved from inf to 0.23897, saving file to ./examples/best/example-sis-ba.pt
+	time: 22.3112	jensenshannon: 0.0009	model_entropy: 0.2521	loss: 0.2371	val_jensenshannon: 0.0009	val_model_entropy: 0.2538	val_loss: 0.2390	
+Epoch 1
+Evaluating train
+Evaluating val
+val_loss improved from 0.23897 to 0.22871, saving file to ./examples/best/example-sis-ba.pt
+	time: 16.5214	jensenshannon: 0.0000	model_entropy: 0.2296	loss: 0.2299	val_jensenshannon: 0.0000	val_model_entropy: 0.2284	val_loss: 0.2287	
+Epoch 2
+Evaluating train
+Evaluating val
+val_loss improved from 0.22871 to 0.22853, saving file to ./examples/best/example-sis-ba.pt
+	time: 16.4779	jensenshannon: 0.0000	model_entropy: 0.2325	loss: 0.2320	val_jensenshannon: 0.0000	val_model_entropy: 0.2291	val_loss: 0.2285	
+Epoch 3
+Evaluating train
+Evaluating val
+val_loss improved from 0.22853 to 0.22764, saving file to ./examples/best/example-sis-ba.pt
+	time: 16.4917	jensenshannon: 0.0000	model_entropy: 0.2285	loss: 0.2284	val_jensenshannon: 0.0000	val_model_entropy: 0.2278	val_loss: 0.2276	
+Epoch 4
+Evaluating train
+Evaluating val
+	time: 16.4707	jensenshannon: 0.0000	model_entropy: 0.2337	loss: 0.2336	val_jensenshannon: 0.0000	val_model_entropy: 0.2304	val_loss: 0.2303	
+Epoch 5
+Evaluating train
+Evaluating val
+	time: 16.4798	jensenshannon: 0.0000	model_entropy: 0.2336	loss: 0.2322	val_jensenshannon: 0.0000	val_model_entropy: 0.2327	val_loss: 0.2313	
+Epoch 6
+Evaluating train
+Evaluating val
+	time: 16.4830	jensenshannon: 0.0000	model_entropy: 0.2300	loss: 0.2292	val_jensenshannon: 0.0000	val_model_entropy: 0.2307	val_loss: 0.2299	
+Epoch 7
+Evaluating train
+Evaluating val
+val_loss improved from 0.22764 to 0.22509, saving file to ./examples/best/example-sis-ba.pt
+	time: 16.3824	jensenshannon: 0.0000	model_entropy: 0.2312	loss: 0.2306	val_jensenshannon: 0.0000	val_model_entropy: 0.2257	val_loss: 0.2251	
+Epoch 8
+Evaluating train
+Evaluating val
+	time: 16.2391	jensenshannon: 0.0000	model_entropy: 0.2292	loss: 0.2290	val_jensenshannon: 0.0000	val_model_entropy: 0.2316	val_loss: 0.2314	
+Epoch 9
+Evaluating train
+Evaluating val
+	time: 16.2462	jensenshannon: 0.0000	model_entropy: 0.2341	loss: 0.2335	val_jensenshannon: 0.0000	val_model_entropy: 0.2288	val_loss: 0.2282	
+
+---Computing metrics---
+TrueLTPMetrics
+GNNLTPMetrics
+MLELTPMetrics
+
+---Finished example-sis-ba---
+Current time: 2023-11-04 15:28:23
+Computation time: 00-00:04:01
+

@@ -62,26 +62,26 @@ def new_init(torch_lr_scheduler):
     return f
 
 
-for name, module_cls in torch.optim.lr_scheduler.__dict__.items():
-    if (
-        inspect.isclass(module_cls)
-        and issubclass(module_cls, _LRScheduler)
-        and module_cls != _LRScheduler
-    ):
-        _new_cls = type(
-            name,
-            (_PyTorchLRSchedulerWrapper,),
-            {
-                "__init__": new_init(module_cls),
-                "__doc__": """
-                See:
-                    :class:`~torch.optim.lr_scheduler.{name}`
-                """.format(
-                    name=name
-                ),
-            },
-        )
-        setattr(sys.modules[__name__], name, _new_cls)
+# for name, module_cls in torch.optim.lr_scheduler.__dict__.items():
+#     if (
+#         inspect.isclass(module_cls)
+#         and issubclass(module_cls, _LRScheduler)
+#         and module_cls != _LRScheduler
+#     ):
+#         _new_cls = type(
+#             name,
+#             (_PyTorchLRSchedulerWrapper,),
+#             {
+#                 "__init__": new_init(module_cls),
+#                 "__doc__": """
+#                 See:
+#                     :class:`~torch.optim.lr_scheduler.{name}`
+#                 """.format(
+#                     name=name
+#                 ),
+#             },
+#         )
+#         setattr(sys.modules[__name__], name, _new_cls)
 
 
 class ReduceLROnPlateau(_PyTorchLRSchedulerWrapper):
@@ -94,7 +94,7 @@ class ReduceLROnPlateau(_PyTorchLRSchedulerWrapper):
 
     def __init__(self, *args, monitor="val_loss", **kwargs):
         super().__init__(
-            torch_lr_scheduler=torch.optim.lr_scheduler.ReduceLROnPlateau,
+            # torch_lr_scheduler=torch.optim.lr_scheduler.ReduceLROnPlateau,
             *args,
             **kwargs
         )
@@ -102,3 +102,18 @@ class ReduceLROnPlateau(_PyTorchLRSchedulerWrapper):
 
     def on_epoch_end(self, epoch_number, logs):
         self.scheduler.step(logs[self.monitor])
+
+
+class StepLR(_PyTorchLRSchedulerWrapper):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(torch.optim.lr_scheduler.StepLR,*args,**kwargs)
+        # super().__init__(
+        #     torch_lr_scheduler=torch.optim.lr_scheduler.StepLR,
+        #     *args,
+        #     **kwargs
+        # )
+        # self.monitor = monitor
+
+    # def on_epoch_end(self, epoch_number, logs):
+    #     self.scheduler.step(logs[self.monitor])
